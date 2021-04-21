@@ -29,7 +29,7 @@ class CardCollectionViewCell: UICollectionViewCell {
         else {
             
             // show back image view
-            flipDown()
+            flipDown(speed: 0, delay: 0)
         }
         
     }
@@ -44,13 +44,32 @@ class CardCollectionViewCell: UICollectionViewCell {
         
     }
     
-    func flipDown(speed: TimeInterval = 0.3) {
+    func flipDown(speed: TimeInterval = 0.3, delay:TimeInterval = 0.5) {
         
-        // flip down animation
-        UIView.transition(from: frontImageView, to: backImageView, duration: speed, options: [.transitionFlipFromLeft, .showHideTransitionViews], completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + delay) {
+            
+            // flip down animation
+            UIView.transition(from: self.frontImageView, to: self.backImageView, duration: speed, options: [.transitionFlipFromLeft, .showHideTransitionViews], completion: nil)
+            
+        }
+        
         
         // update flipped status
         card?.isFlipped = false
+        
+    }
+ 
+    func remove() {
+        
+        // remove backimageview immediately
+        backImageView.alpha = 0
+        
+        // apply animation to the front image views to user can see them fading
+        UIView.animate(withDuration: 0.3, delay: 0.5, options: .curveEaseOut, animations: {
+            
+            self.frontImageView.alpha = 0
+            
+        }, completion: nil)
         
     }
     
