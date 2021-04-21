@@ -42,13 +42,25 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath)
+        // reuse cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath) as! CardCollectionViewCell
         
-        // TODO: Configure cell
+        // get card from array
+        let card = cardsArray[indexPath.row]
+        
+        // finish configuring cell
+        cell.configureCell(card: card)
         
         return cell
         
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        // get reference to cell that was tapped
+        let cell = collectionView.cellForItem(at: indexPath) as? CardCollectionViewCell
+        
+        cell?.flipUp()
+    }
     
 }
