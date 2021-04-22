@@ -8,7 +8,7 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     // MARK: - Variables and Properties
     
     @IBOutlet weak var collectionView: UICollectionView!
@@ -22,16 +22,16 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         collectionView.delegate = self
         collectionView.dataSource = self
         
         cardsArray = model.getCards()
-
+        
     }
-
+    
     // MARK: - Game Logic Methods
-
+    
     func checkForMatch(_ secondFlippedCardIndex:IndexPath) {
         
         // get the two card objects for the two indices and see if they match
@@ -84,13 +84,20 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
         // reuse cell
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCell", for: indexPath) as! CardCollectionViewCell
         
+        return cell
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        // try to cast
+        let cardCell = cell as? CardCollectionViewCell
+        
         // get card from array
         let card = cardsArray[indexPath.row]
         
         // finish configuring cell
-        cell.configureCell(card: card)
-        
-        return cell
+        cardCell?.configureCell(card: card)
         
     }
     
@@ -99,7 +106,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
         // get reference to cell that was tapped
         let cell = collectionView.cellForItem(at: indexPath) as? CardCollectionViewCell
         
-        if cell?.card?.isFlipped == false {
+        if cell?.card?.isFlipped == false && cell?.card?.isMatched == false {
             
             // flip up
             cell?.flipUp()
@@ -117,11 +124,6 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
                 // run comparison logic
                 checkForMatch(indexPath)
             }
-            
-        }
-        else {
-            
-            
             
         }
         
