@@ -12,7 +12,6 @@ class ViewController: UIViewController {
     // MARK: - Variables and Properties
     
     @IBOutlet weak var collectionView: UICollectionView!
-    
     @IBOutlet weak var timerLabel: UILabel!
     
     var model = CardModel()
@@ -22,6 +21,8 @@ class ViewController: UIViewController {
     
     var timer:Timer?
     var milliseconds:Int = 10 * 1000
+    
+    var soundPlayer = SoundManager()
     
     // MARK: - Lifecycle
     
@@ -37,6 +38,8 @@ class ViewController: UIViewController {
         timer = Timer.scheduledTimer(timeInterval: 1/1000, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
         
         RunLoop.main.add(timer!, forMode: .common)
+        
+        soundPlayer.playSound(effect: .shuffle)
     }
     
     // MARK: - Timer Methods
@@ -85,6 +88,9 @@ class ViewController: UIViewController {
             cardOne.isMatched = true
             cardTwo.isMatched = true
             
+            // play is matched sound
+            soundPlayer.playSound(effect: .match)
+            
             // remove cards
             cardOneCell?.remove()
             cardTwoCell?.remove()
@@ -98,6 +104,9 @@ class ViewController: UIViewController {
             // set the state
             cardOne.isFlipped = false
             cardTwo.isFlipped = false
+            
+            // play no match sound
+            soundPlayer.playSound(effect: .nomatch)
             
             // cards are not a match
             cardOneCell?.flipDown()
@@ -195,6 +204,11 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        // disallow user to interact with the cards once timer has run out
+        if milliseconds <= 0 {
+            return
+        }
+        
         // get reference to cell that was tapped
         let cell = collectionView.cellForItem(at: indexPath) as? CardCollectionViewCell
         
@@ -202,6 +216,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
             
             // flip up
             cell?.flipUp()
+            
+            // play flip up sound
+            soundPlayer.playSound(effect: .flip)
             
             // check if this is the first flipped card
             if firstFlippedCardIndex == nil {

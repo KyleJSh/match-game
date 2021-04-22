@@ -14,8 +14,11 @@ class CardModel {
         // declare an empty array
         var generatedCards = [Card]()
         
+        // store random numbers
+        var generatedNumbers = [Int]()
+        
         // randomly generate 8 pairs of cards
-        for _ in 1...8 {
+        while generatedNumbers.count < 8 {
             
             // generate random number
             let randomNum = Int.random(in: 1...13)
@@ -29,6 +32,7 @@ class CardModel {
             
             // add to the array
             generatedCards += [cardOne, cardTwo]
+            generatedNumbers.append(randomNum)
             
             // print random numbers to console
             print(randomNum)

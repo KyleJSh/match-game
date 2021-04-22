@@ -70,7 +70,6 @@ class CardCollectionViewCell: UICollectionViewCell {
             
         }
         
-        
         // update flipped status
         card?.isFlipped = false
         
@@ -87,7 +86,5 @@ class CardCollectionViewCell: UICollectionViewCell {
             self.frontImageView.alpha = 0
             
         }, completion: nil)
-        
     }
-    
 }
