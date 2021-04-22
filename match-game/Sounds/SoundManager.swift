@@ -15,10 +15,11 @@ class SoundManager {
     
     enum SoundEffect {
         
+        case shuffle
         case flip
         case match
-        case nomatch
-        case shuffle
+        case win
+        case lose
         
     }
     
@@ -28,20 +29,22 @@ class SoundManager {
         
         switch effect {
         
+        case .shuffle:
+            soundFilename = "shuffleCards"
+            
         case .flip:
-            soundFilename = "cardflip"
+            soundFilename = "cardFlip"
             
         case .match:
-            soundFilename = "dingcorrect"
+            soundFilename = "match"
             
-        case .nomatch:
-            soundFilename = "dingwrong"
-            
-        case .shuffle:
-            soundFilename = "shuffle"
+        case .win:
+            soundFilename = "gameWin"
+        case .lose:
+            soundFilename = "gameLose"
         }
         
-        let bundlePath = Bundle.main.path(forResource: soundFilename, ofType: ".wav")
+        let bundlePath = Bundle.main.path(forResource: soundFilename, ofType: ".mp3")
         
         guard bundlePath != nil else {
             // couldn't find resource

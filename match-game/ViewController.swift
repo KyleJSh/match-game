@@ -20,7 +20,9 @@ class ViewController: UIViewController {
     var firstFlippedCardIndex:IndexPath?
     
     var timer:Timer?
-    var milliseconds:Int = 10 * 1000
+    
+    // timer is 30 seconds
+    var milliseconds:Int = 30 * 1000
     
     var soundPlayer = SoundManager()
     
@@ -105,9 +107,6 @@ class ViewController: UIViewController {
             cardOne.isFlipped = false
             cardTwo.isFlipped = false
             
-            // play no match sound
-            soundPlayer.playSound(effect: .nomatch)
-            
             // cards are not a match
             cardOneCell?.flipDown()
             cardTwoCell?.flipDown()
@@ -138,6 +137,12 @@ class ViewController: UIViewController {
         
         if hasWon == true {
             
+            // invalidate timer
+            timer?.invalidate()
+            
+            // play win game sound
+            soundPlayer.playSound(effect: .win)
+            
             // user has won, show some sort of pop up dialog
             showAlert(title: "Congratulations", message: "You've won the game!")
         }
@@ -145,6 +150,9 @@ class ViewController: UIViewController {
             
             // user hasn't won, check if there's time left
             if milliseconds <= 0 {
+                
+                // play lose game sound
+                soundPlayer.playSound(effect: .lose)
                 
                 showAlert(title: "Time's Up!", message: "Sorry, better luck next time")
                 
@@ -160,7 +168,7 @@ class ViewController: UIViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         // create UIAlertAction object
-        let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+        let okAction = UIAlertAction(title: "Play Again!", style: .default, handler: nil)
         
         // button needs to be added to alert
         alert.addAction(okAction)
