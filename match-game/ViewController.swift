@@ -13,10 +13,15 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     
+    @IBOutlet weak var timerLabel: UILabel!
+    
     var model = CardModel()
     var cardsArray = [Card]()
     
     var firstFlippedCardIndex:IndexPath?
+    
+    var timer:Timer?
+    var milliseconds:Int = 10 * 1000
     
     // MARK: - Lifecycle
     
@@ -27,6 +32,38 @@ class ViewController: UIViewController {
         collectionView.dataSource = self
         
         cardsArray = model.getCards()
+        
+        // initialize timer
+        timer = Timer.scheduledTimer(timeInterval: 1/1000, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
+        
+        RunLoop.main.add(timer!, forMode: .common)
+    }
+    
+    // MARK: - Timer Methods
+    @objc func timerFired() {
+        
+        // decrement the timer
+        milliseconds -= 1
+        
+        // update the label
+        let seconds:Double = Double(milliseconds)/1000.0
+        
+        // % is wild card, and .2f is expressed in 2 decimal places
+        timerLabel.text = String(format: "Time Remaining: %.2f", seconds)
+        
+        // stop the timer if it reaches zero
+        if milliseconds == 0 {
+            
+            // update timer label to notify user
+            timerLabel.textColor = UIColor.red
+            
+            // call invalidate method on timer
+            timer?.invalidate()
+            
+        }
+        
+        // TODO: check if user has cleared all the pairs
+        checkForGameEnd()
         
     }
     
@@ -52,6 +89,9 @@ class ViewController: UIViewController {
             cardOneCell?.remove()
             cardTwoCell?.remove()
             
+            // check if user has cleared all the pairs
+            checkForGameEnd()
+            
         }
         else {
             
@@ -67,6 +107,58 @@ class ViewController: UIViewController {
         
         // reset the firstFlippedCardIndex property
         firstFlippedCardIndex = nil
+    }
+    
+    func checkForGameEnd() {
+        
+        var hasWon = true
+        
+        for card in cardsArray {
+            
+            if card.isMatched == false {
+                
+                // we've found a card that is unmatched
+                hasWon = false
+                
+                // kill loop
+                break
+                
+            }
+            
+        }
+        
+        if hasWon == true {
+            
+            // user has won, show some sort of pop up dialog
+            showAlert(title: "Congratulations", message: "You've won the game!")
+        }
+        else {
+            
+            // user hasn't won, check if there's time left
+            if milliseconds <= 0 {
+                
+                showAlert(title: "Time's Up!", message: "Sorry, better luck next time")
+                
+            }
+            
+        }
+        
+    }
+    
+    func showAlert(title:String, message:String) {
+        
+        // create alert
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        // create UIAlertAction object
+        let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+        
+        // button needs to be added to alert
+        alert.addAction(okAction)
+        
+        // present alert
+        present(alert, animated: true, completion: nil)
+        
     }
     
 }
